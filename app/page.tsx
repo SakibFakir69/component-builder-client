@@ -9,6 +9,10 @@ import PricingSection from '@/components/landing/Pricing'
 import Testimonial from '@/components/landing/Testimonial'
 import React from 'react'
 
+// redux 
+// chat ui 
+// add api login , reg , log out 
+
 
 function page() {
   return (
