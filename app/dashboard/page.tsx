@@ -5,13 +5,12 @@ import axios from "axios";
 import { PlusCircle } from "lucide-react";
 import Prism from "prismjs";
 import "prismjs/themes/prism-tomorrow.css";
-
-// Languages
 import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-jsx";
 import "prismjs/components/prism-typescript";
 import "prismjs/components/prism-json";
 import "prismjs/components/prism-css";
+import { v4 as uuidv4 } from 'uuid';
 
 
 interface Message {
@@ -57,6 +56,8 @@ export default function ChatLayoutDemo() {
     Prism.highlightAll();
   }, [activeConversation]);
 
+
+
   // Fetch chat history
   useEffect(() => {
     const fetchHistory = async () => {
@@ -80,6 +81,16 @@ export default function ChatLayoutDemo() {
     fetchHistory();
   }, []);
 
+
+  const x = ()=>{
+
+    //// sesession id 
+    /// prompt 
+    alert("create new prompt")
+    const sessionID =uuidv4();
+    console.log(sessionID)
+
+  }
   const handleSendMessage = async () => {
     if (!input.trim() || !activeConversation) return;
 
@@ -190,7 +201,7 @@ export default function ChatLayoutDemo() {
           <div className="flex justify-between w-full">
             <h2 className="font-semibold text-lg text-gray-800">Chats</h2>
             <button className="border">
-              <PlusCircle color="black" />
+              <PlusCircle onClick={x} color="black" />
             </button>
           </div>
           <button
