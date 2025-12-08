@@ -1,7 +1,18 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import { PlusCircle } from "lucide-react";
+import Prism from "prismjs";
+import "prismjs/themes/prism-tomorrow.css";
+
+// Languages
+import "prismjs/components/prism-javascript";
+import "prismjs/components/prism-jsx";
+import "prismjs/components/prism-typescript";
+import "prismjs/components/prism-json";
+import "prismjs/components/prism-css";
+
 
 interface Message {
   _id: string;
@@ -16,6 +27,18 @@ interface Conversation {
   userId: string;
 }
 
+// 🔥 Function – detect & extract code blocks
+const extractCode = (text: string) => {
+  const regex = /```(\w+)?\n([\s\S]*?)```/;
+  const match = text.match(regex);
+  if (!match) return null;
+
+  return {
+    lang: match[1] || "javascript",
+    code: match[2],
+  };
+};
+
 export default function ChatLayoutDemo() {
   const [history, setHistory] = useState<Conversation[]>([]);
   const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
@@ -24,15 +47,17 @@ export default function ChatLayoutDemo() {
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-
-
-
-
+  // 🔥 Scroll bottom when new messages load
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeConversation]);
 
-  // Fetch conversation history
+  // 🔥 Highlight Prism when new messages come
+  useEffect(() => {
+    Prism.highlightAll();
+  }, [activeConversation]);
+
+  // Fetch chat history
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -40,21 +65,24 @@ export default function ChatLayoutDemo() {
           "http://localhost:5000/api/v1/prompt/chat-history",
           { withCredentials: true }
         );
-        const conversations = Array.isArray(res.data) ? res.data : res.data.data || [];
+
+        const conversations = Array.isArray(res.data)
+          ? res.data
+          : res.data.data || [];
+
         setHistory(conversations);
         if (conversations.length > 0) setActiveConversation(conversations[0]);
       } catch (err) {
         console.error(err);
       }
     };
+
     fetchHistory();
   }, []);
 
-  // Send new message
   const handleSendMessage = async () => {
     if (!input.trim() || !activeConversation) return;
 
-    // Add user message locally
     const newMessage: Message = {
       _id: Date.now().toString(),
       role: "user",
@@ -68,21 +96,18 @@ export default function ChatLayoutDemo() {
     };
 
     setActiveConversation(updatedConversation);
-    setHistory((prev) =>
-      prev.map((conv) =>
+    setHistory(prev =>
+      prev.map(conv =>
         conv.conversationId === activeConversation.conversationId
           ? updatedConversation
           : conv
       )
     );
 
-    // Send to backend and get AI response
     await createPrompt(input, activeConversation.conversationId);
-
     setInput("");
   };
 
-  // Call backend to create prompt and add AI response
   const createPrompt = async (promptText: string, conversationId: string) => {
     try {
       const res = await axios.post(
@@ -105,8 +130,8 @@ export default function ChatLayoutDemo() {
         };
 
         setActiveConversation(updatedConversation);
-        setHistory((prev) =>
-          prev.map((conv) =>
+        setHistory(prev =>
+          prev.map(conv =>
             conv.conversationId === activeConversation.conversationId
               ? updatedConversation
               : conv
@@ -118,20 +143,55 @@ export default function ChatLayoutDemo() {
     }
   };
 
+  // 🔥 Render message with code or normal text
+  const renderMessage = (msg: Message) => {
+    const codeData = extractCode(msg.content);
+
+    // If message contains code block
+    if (codeData) {
+      return (
+        <pre className="max-w-xl p-4 rounded-2xl bg-[#1e1e1e] text-[#cccccc] overflow-x-auto text-sm">
+          <code className={`language-${codeData.lang}`}>
+            {codeData.code}
+          </code>
+        </pre>
+      );
+    }
+
+    // Otherwise render plain message
+    return (
+      <div
+        className={`max-w-xl px-4 py-3 rounded-2xl whitespace-pre-wrap text-sm leading-relaxed ${
+          msg.role === "user"
+            ? "bg-black text-white rounded-br-none"
+            : "bg-gray-100 text-gray-900 rounded-bl-none"
+        }`}
+      >
+        {msg.content}
+      </div>
+    );
+  };
+
   return (
     <div className="flex h-screen bg-white overflow-hidden">
       {/* LEFT SIDEBAR */}
       <div
-        className={`absolute inset-y-0 left-0 z-20
-          md:relative md:w-72 md:flex md:flex-col
-          w-72 bg-gray-50 border-r border-gray-200 p-4
-          transition-transform duration-300 ease-in-out
-          ${isHistoryVisible ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
+        className={`absolute inset-y-0 left-0 z-20 
+        md:relative md:w-72 md:flex md:flex-col
+        w-72 bg-gray-50 border-r border-gray-200 p-4
+        transition-transform duration-300 ease-in-out
+        ${
+          isHistoryVisible
+            ? "translate-x-0"
+            : "-translate-x-full md:translate-x-0"
+        }`}
       >
         <div className="flex justify-between items-center mb-3">
-          <div className="flex justify-between">
+          <div className="flex justify-between w-full">
             <h2 className="font-semibold text-lg text-gray-800">Chats</h2>
-            <button>+</button>
+            <button className="border">
+              <PlusCircle color="black" />
+            </button>
           </div>
           <button
             onClick={() => setIsHistoryVisible(false)}
@@ -141,9 +201,8 @@ export default function ChatLayoutDemo() {
           </button>
         </div>
 
-        {/* Chat list */}
         <div className="flex-1 overflow-y-auto space-y-2">
-          {history.map((conv) => (
+          {history.map(conv => (
             <div
               key={conv.conversationId}
               onClick={() => setActiveConversation(conv)}
@@ -154,19 +213,22 @@ export default function ChatLayoutDemo() {
               }`}
             >
               <p className="font-medium truncate">
-                {conv.messages[0]?.content.substring(0, 30) || "New Conversation"}
+                {conv.messages[0]?.content.substring(0, 30) ||
+                  "New Conversation"}
               </p>
               <p className="text-sm opacity-75 truncate">
-                {conv.messages[conv.messages.length - 1]?.content.substring(0, 30) || ""}
+                {conv.messages[conv.messages.length - 1]?.content.substring(
+                  0,
+                  30
+                ) || ""}
               </p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* RIGHT CHAT PANEL */}
+      {/* RIGHT PANEL */}
       <div className="flex-1 flex flex-col">
-        {/* Top Header */}
         <div className="px-4 py-3 border-b border-gray-200 bg-white flex items-center justify-between">
           <button
             onClick={() => setIsHistoryVisible(!isHistoryVisible)}
@@ -184,35 +246,29 @@ export default function ChatLayoutDemo() {
 
         {/* CHAT MESSAGES */}
         <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
-          {activeConversation?.messages.map((msg) => (
+          {activeConversation?.messages.map(msg => (
             <div
               key={msg._id}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex ${
+                msg.role === "user" ? "justify-end" : "justify-start"
+              }`}
             >
-              <div
-                className={`max-w-xl px-4 py-2 rounded-2xl text-sm break-words ${
-                  msg.role === "user"
-                    ? "bg-black text-white rounded-br-none"
-                    : "bg-gray-100 text-gray-800 rounded-bl-none"
-                }`}
-              >
-                {msg.content}
-              </div>
+              {renderMessage(msg)}
             </div>
           ))}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* INPUT AREA */}
+        {/* INPUT BAR */}
         <div className="p-4 border-t border-gray-200 bg-white">
           <div className="flex items-center space-x-3">
             <input
               type="text"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={e => setInput(e.target.value)}
               placeholder="Type a message..."
               className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black/40 outline-none"
-              onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+              onKeyDown={e => e.key === "Enter" && handleSendMessage()}
             />
             <button
               onClick={handleSendMessage}
