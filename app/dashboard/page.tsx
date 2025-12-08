@@ -129,7 +129,10 @@ export default function ChatLayoutDemo() {
           ${isHistoryVisible ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         <div className="flex justify-between items-center mb-3">
-          <h2 className="font-semibold text-lg text-gray-800">Chats</h2>
+          <div className="flex justify-between">
+            <h2 className="font-semibold text-lg text-gray-800">Chats</h2>
+            <button>+</button>
+          </div>
           <button
             onClick={() => setIsHistoryVisible(false)}
             className="md:hidden text-gray-500 hover:bg-gray-200 p-1 rounded"
