@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link';
 import React, { useState } from 'react';
 
 const UserIcon: React.FC = () => (
@@ -273,9 +274,9 @@ const Signin1: React.FC = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Already have an account?{' '}
-              <a href="#" className="text-gray-900 dark:text-gray-100 font-medium hover:underline">
+              <Link  href="/auth/login" className="text-gray-900 dark:text-gray-100 font-medium hover:underline">
                 Sign in
-              </a>
+              </Link>
             </p>
           </div>
         </div>
