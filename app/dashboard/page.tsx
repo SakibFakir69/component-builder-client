@@ -11,6 +11,7 @@ import "prismjs/components/prism-typescript";
 import "prismjs/components/prism-json";
 import "prismjs/components/prism-css";
 import { v4 as uuidv4 } from 'uuid';
+import { CopyButton } from "@/components/copy";
 
 
 interface Message {
@@ -80,6 +81,14 @@ export default function ChatLayoutDemo() {
 
     fetchHistory();
   }, []);
+
+  // handel copy 
+
+  const handelCopy = (code)=>{
+
+    return window.navigator.clipboard.writeText(code);
+
+  }
 
 
   const x = ()=>{
@@ -160,14 +169,19 @@ export default function ChatLayoutDemo() {
 
     // If message contains code block
     if (codeData) {
-      return (
-        <pre className="max-w-xl p-4 rounded-2xl bg-[#1e1e1e] text-[#cccccc] overflow-x-auto text-sm">
-          <code className={`language-${codeData.lang}`}>
-            {codeData.code}
-          </code>
-        </pre>
-      );
-    }
+  return (
+    <div className="relative max-w-xl">
+      {/* Render the copy button */}
+      <CopyButton code={codeData.code} />
+
+      <pre className="p-4 rounded-2xl bg-[#1e1e1e] text-[#cccccc] overflow-x-auto text-sm">
+        <code className={`language-${codeData.lang}`}>
+          {codeData.code}
+        </code>
+      </pre>
+    </div>
+  );
+}
 
     // Otherwise render plain message
     return (
