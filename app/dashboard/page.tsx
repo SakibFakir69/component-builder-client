@@ -13,6 +13,7 @@ import "prismjs/components/prism-css";
 import { v4 as uuidv4 } from 'uuid';
 import { CopyButton } from "@/components/copy";
 import { useGetMeQuery } from "@/lib/api/baseApi";
+import Link from "next/link";
 
 
 interface Message {
@@ -313,7 +314,17 @@ const renderMessage = (msg: Message) => {
               ? `Conversation ${activeConversation.conversationId}`
               : "Select a chat"}
           </h2>
-          <div className="w-8 text-blac">Profile and subscription</div>
+          <div className=" flex gap-x-5">
+            
+              <Link href={'/priceing'} className="text-blue-500">Buy Plan</Link>
+
+            {
+              getMe && <button className=" flex bg-black text-white p-1.5 px-10 rounded">Log out</button>
+            }
+          
+
+
+          </div>
         </div>
 
         {/* CHAT MESSAGES */}
