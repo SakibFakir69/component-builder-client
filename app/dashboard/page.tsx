@@ -12,6 +12,7 @@ import "prismjs/components/prism-json";
 import "prismjs/components/prism-css";
 import { v4 as uuidv4 } from 'uuid';
 import { CopyButton } from "@/components/copy";
+import { useGetMeQuery } from "@/lib/api/baseApi";
 
 
 interface Message {
@@ -44,8 +45,11 @@ export default function ChatLayoutDemo() {
   const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
   const [input, setInput] = useState("");
   const [isHistoryVisible, setIsHistoryVisible] = useState(true);
+  const {data:getMe , isLoading} = useGetMeQuery('');
+  console.log(getMe , ' me ')
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+   const [showPreview, setShowPreview] = useState(true); // toggle for previe
 
   // 🔥 Scroll bottom when new messages load
   useEffect(() => {
@@ -82,24 +86,52 @@ export default function ChatLayoutDemo() {
     fetchHistory();
   }, []);
 
-  // handel copy 
+  // loadin 
 
-  const handelCopy = (code)=>{
 
-    return window.navigator.clipboard.writeText(code);
-
+  if(isLoading)
+  {
+    return <div className="w-full h-full justify-center items-center">
+      <h1 className="flex justify-center items-center mt-56">Loading....</h1>
+    </div>
   }
 
+  
 
-  const x = ()=>{
+  const x = async () => {
+  const newConversationId = uuidv4();
 
-    //// sesession id 
-    /// prompt 
-    alert("create new prompt")
-    const sessionID =uuidv4();
-    console.log(sessionID)
+  try {
+    // Call backend API to create new conversation
+    const res = await axios.post(
+      "http://localhost:5000/api/v1/prompt/create-prompt", // replace with your endpoint
+      {
+        sessionId: newConversationId,
+        prompt:prompt || "hey how are you"
+      },
+      { withCredentials: true }
+    );
 
+    if (res.data.status) {
+      // Create local conversation object
+      const newConversation: Conversation = {
+        conversationId: newConversationId,
+        userId: "current-user-id",
+        messages: [],
+      };
+
+      // Add to history & set active
+      setHistory(prev => [newConversation, ...prev]);
+      setActiveConversation(newConversation);
+      setInput("");
+    } else {
+      console.error("Failed to create conversation:", res.data);
+    }
+  } catch (err) {
+    console.error("API error:", err);
   }
+};
+
   const handleSendMessage = async () => {
     if (!input.trim() || !activeConversation) return;
 
@@ -132,7 +164,7 @@ export default function ChatLayoutDemo() {
     try {
       const res = await axios.post(
         "http://localhost:5000/api/v1/prompt/create-prompt",
-        { prompt: promptText, sessionId: conversationId },
+        { prompt: promptText, sessionId: uuidv4() },
         { withCredentials: true }
       );
 
@@ -163,39 +195,54 @@ export default function ChatLayoutDemo() {
     }
   };
 
-  // 🔥 Render message with code or normal text
-  const renderMessage = (msg: Message) => {
-    const codeData = extractCode(msg.content);
+ 
 
-    // If message contains code block
-    if (codeData) {
-  return (
-    <div className="relative max-w-xl">
-      {/* Render the copy button */}
-      <CopyButton code={codeData.code} />
+const renderMessage = (msg: Message) => {
+  const codeData = extractCode(msg.content);
+  
+  if (codeData) {
+    const lang = codeData.lang.toLowerCase();
 
-      <pre className="p-4 rounded-2xl bg-[#1e1e1e] text-[#cccccc] overflow-x-auto text-sm">
-        <code className={`language-${codeData.lang}`}>
-          {codeData.code}
-        </code>
-      </pre>
-    </div>
-  );
-}
-
-    // Otherwise render plain message
     return (
-      <div
-        className={`max-w-xl px-4 py-3 rounded-2xl whitespace-pre-wrap text-sm leading-relaxed ${
-          msg.role === "user"
-            ? "bg-black text-white rounded-br-none"
-            : "bg-gray-100 text-gray-900 rounded-bl-none"
-        }`}
-      >
-        {msg.content}
+      <div className="relative max-w-xl space-y-2">
+        {/* Copy + Preview toggle side by side */}
+        <div className="flex space-x-2 mb-1">
+          <CopyButton code={codeData.code} />
+          {["html", "javascript"].includes(lang) && (
+            <button
+              onClick={() => setShowPreview(prev => !prev)}
+              className="px-2 py-1 text-xs bg-black/70 text-white rounded hover:bg-black"
+            >
+              {showPreview ? "Hide Preview" : "Show Preview"}
+            </button>
+          )}
+        </div>
+
+        {/* Code block */}
+        <pre className="p-4 rounded-2xl bg-[#1e1e1e] text-[#cccccc] overflow-x-auto text-sm">
+          <code className={`language-${lang}`}>{codeData.code}</code>
+        </pre>
+
+      
       </div>
     );
-  };
+  }
+
+  // Plain text message
+  return (
+    <div
+      className={`max-w-xl px-4 py-3 rounded-2xl whitespace-pre-wrap text-sm leading-relaxed ${
+        msg.role === "user"
+          ? "bg-black text-white rounded-br-none"
+          : "bg-gray-100 text-gray-900 rounded-bl-none"
+      }`}
+    >
+      {msg.content}
+    </div>
+  );
+};
+
+ 
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">
@@ -266,7 +313,7 @@ export default function ChatLayoutDemo() {
               ? `Conversation ${activeConversation.conversationId}`
               : "Select a chat"}
           </h2>
-          <div className="w-8"></div>
+          <div className="w-8 text-blac">Profile and subscription</div>
         </div>
 
         {/* CHAT MESSAGES */}

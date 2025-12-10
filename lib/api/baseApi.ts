@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_BACKEND_URL,
+    baseUrl: process.env.NEXT_BACKEND_URL || 'http://localhost:5000/api/v1',
     credentials: "include",
   }),
 
@@ -26,7 +26,7 @@ export const baseApi = createApi({
       }),
     }),
 
-    // Get Me
+   
     getMe: builder.query({
       query: () => ({
         url: "/auth/me",
@@ -43,7 +43,7 @@ export const baseApi = createApi({
             data:data
         })
     }),
-    // prompt history 
+  
     promptHistory:builder.query({
         query:()=>({
             url:"/prompt/prompt-history",
