@@ -13,13 +13,15 @@ import "prismjs/components/prism-css";
 import { v4 as uuidv4 } from "uuid";
 import { CopyButton } from "@/components/copy";
 import {
+  useCreatePromptMutation,
+  useGeneratePromptMutation,
   useGetMeQuery,
   useLoginUserMutation,
-
+  usePromptHistoryQuery,
 } from "@/lib/api/baseApi";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import { useGetPayment } from "@/components/payment/GetPayment";
 
 interface Message {
   _id: string;
@@ -52,9 +54,13 @@ export default function ChatLayoutDemo() {
     useState<Conversation | null>(null);
   const [input, setInput] = useState("");
   const [isHistoryVisible, setIsHistoryVisible] = useState(true);
+  const { getPayment } = useGetPayment();
   const { data: getMe, isLoading } = useGetMeQuery("");
   const [logoutUser] = useLoginUserMutation();
-  console.log(getMe, " me ");
+  const [generatePrompt] = useGeneratePromptMutation();
+  const { data: promptHistory } = usePromptHistoryQuery("");
+  const [Loading, setLoading] = useState(false);
+  console.log(getMe, " me ", promptHistory);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [showPreview, setShowPreview] = useState(true); // toggle for previe
@@ -71,27 +77,18 @@ export default function ChatLayoutDemo() {
   }, [activeConversation]);
 
   // Fetch chat history
+
   useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const res = await axios.get(
-          "http://localhost:5000/api/v1/prompt/chat-history",
-          { withCredentials: true }
-        );
+    if (!promptHistory) return;
 
-        const conversations = Array.isArray(res.data)
-          ? res.data
-          : res.data.data || [];
+    const conversations = Array.isArray(promptHistory)
+      ? promptHistory
+      : promptHistory.data || [];
 
-        setHistory(conversations);
-        if (conversations.length > 0) setActiveConversation(conversations[0]);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+    setHistory(conversations);
 
-    fetchHistory();
-  }, []);
+    if (conversations.length > 0) setActiveConversation(conversations[0]);
+  }, [promptHistory]);
 
   // loadin
 
@@ -161,17 +158,26 @@ export default function ChatLayoutDemo() {
       )
     );
 
-    await createPrompt(input, activeConversation.conversationId);
     setInput("");
+    setLoading(true);
+    try {
+      const res = await createPrompt(input, activeConversation.conversationId);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const createPrompt = async (promptText: string, conversationId: string) => {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/v1/prompt/create-prompt",
-        { prompt: promptText, sessionId: uuidv4() },
-        { withCredentials: true }
-      );
+      const payload = {
+        prompt: promptText,
+        sessionId: conversationId,
+      };
+      const res = await generatePrompt(payload).unwrap();
+      console.log(res, " create prompt");
 
       if (res.data.status && activeConversation) {
         const aiMessage: Message = {
@@ -196,7 +202,7 @@ export default function ChatLayoutDemo() {
         );
       }
     } catch (err) {
-      console.error(err);
+      console.log(err, "error from create prompt");
     }
   };
 
@@ -221,7 +227,6 @@ export default function ChatLayoutDemo() {
             )}
           </div>
 
-          {/* Code block */}
           <pre className="p-4 rounded-2xl bg-[#1e1e1e] text-[#cccccc] overflow-x-auto text-sm">
             <code className={`language-${lang}`}>{codeData.code}</code>
           </pre>
@@ -248,12 +253,16 @@ export default function ChatLayoutDemo() {
   const handelLogOut = async () => {
     try {
       const res = await logoutUser("").unwrap();
-      router.push('/auth/login');
+      router.push("/auth/login");
       console.log(res);
     } catch (error) {
       console.log(error);
     }
   };
+
+  console.log(getPayment?.data[0], " payment", getPayment);
+
+  console.log(Loading, ' loading')
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">
@@ -325,12 +334,24 @@ export default function ChatLayoutDemo() {
               : "Select a chat"}
           </h2>
           <div className=" flex gap-x-5 items-center">
-            <Link href={"/dashboard/plan"} className="text-blue-500">
-              Buy Plan
-            </Link>
+            {getPayment?.data[0].planName && (
+              <div>
+                <h1 className="text-black">
+                  {getPayment?.data[0]?.planName || "buy"}
+                </h1>
+              </div>
+            )}
+            {!getPayment?.data[0].planName && (
+              <div>
+                <Link href={"/dashboard/plan"}>Buy Plan</Link>
+              </div>
+            )}
 
             {getMe && (
-              <button onClick={handelLogOut} className=" flex bg-black text-white p-1.5 px-10 rounded">
+              <button
+                onClick={handelLogOut}
+                className=" flex bg-black text-white p-1.5 px-10 rounded"
+              >
                 Log out
               </button>
             )}
@@ -349,6 +370,21 @@ export default function ChatLayoutDemo() {
               {renderMessage(msg)}
             </div>
           ))}
+
+          {/* Loading indicator when waiting for AI response */}
+          {Loading && (
+            <div className="flex justify-start">
+              <div className="bg-gray-100 px-4 py-3 rounded-2xl text-sm text-gray-600 flex items-center space-x-2">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-100"></div>
+                  <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200"></div>
+                </div>
+                <span className="text-black">Thinking...</span>
+              </div>
+            </div>
+          )}
+
           <div ref={messagesEndRef} />
         </div>
 
@@ -360,7 +396,7 @@ export default function ChatLayoutDemo() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type a message..."
-              className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black/40 outline-none"
+              className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black/40 outline-none text-black"
               onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
             />
             <button

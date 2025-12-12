@@ -6,6 +6,7 @@ export const baseApi = createApi({
     baseUrl: process.env.NEXT_BACKEND_URL || 'http://localhost:5000/api/v1',
     credentials: "include",
   }),
+  tagTypes:['Prompt'],
 
   endpoints: (builder) => ({
     // Register user
@@ -46,19 +47,31 @@ export const baseApi = createApi({
 
 
     // create prompt 
-    createPrompt:builder.mutation({
+    generatePrompt:builder.mutation({
         query:(data)=>({
             url:"/prompt/create-prompt",
             method:"POST",
-            data:data
-        })
+            body:data
+        }),
+        invalidatesTags:['Prompt']
     }),
   
     promptHistory:builder.query({
         query:()=>({
-            url:"/prompt/prompt-history",
+            url:"/prompt/chat-history",
             method:"GET"
-        })
+        }),
+        providesTags:['Prompt']
+    }),
+
+
+    // get payment 
+
+    getPayment:builder.query({
+      query:()=>({
+        url:"/payment/get-payment",
+        method:"GET"
+      })
     })
 
   }),
@@ -69,6 +82,7 @@ export const {
   useLoginUserMutation,
   useGetMeQuery,
   usePromptHistoryQuery,
-  useCreatePromptMutation,
-  useLogoutUserMutation
+  useGeneratePromptMutation,
+  useLogoutUserMutation,
+  useGetPaymentQuery
 } = baseApi;
