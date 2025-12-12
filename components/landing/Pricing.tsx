@@ -1,5 +1,6 @@
 
 'use client'
+import Link from 'next/link';
 import React from 'react';
 
 // TypeScript interfaces
@@ -160,16 +161,16 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
           </li>
         ))}
       </ul>
-      <button className={buttonClasses}>
+      <Link href={'/auth/login'} className={buttonClasses}>
         {plan.buttonText}
-      </button>
+      </Link>
     </div>
   );
 };
 
 
 // Main Pricing Section Component
-const PricingSection: React.FC = () => {
+const PricingSection2: React.FC = () => {
   return (
     <section id="pricing" className="relative py-16 sm:py-24 overflow-hidden">
       {/* Subtle pattern overlay */}
@@ -227,4 +228,4 @@ const PricingSection: React.FC = () => {
   );
 };
 
-export default PricingSection;
+export default PricingSection2;

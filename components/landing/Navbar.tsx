@@ -1,10 +1,8 @@
-
-
-
 'use client'
 import React from 'react';
 import { motion, Variants } from 'framer-motion';
-import { Home, Settings, Bell, User } from 'lucide-react';
+// Updated imports for better-fitting icons
+import { Home, Settings, Bell, User, Tag, MessageSquareText, FileQuestionMark } from 'lucide-react';
 
 // --- MenuBar Component ---
 
@@ -20,34 +18,43 @@ const menuItems: MenuItem[] = [
   {
     icon: <Home className="h-5 w-5" />,
     label: "Home",
-    href: "#",
+    href: "/home",
     gradient: "radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(37,99,235,0.06) 50%, rgba(29,78,216,0) 100%)",
     iconColor: "group-hover:text-blue-500 dark:group-hover:text-blue-400",
   },
   {
-    icon: <Bell className="h-5 w-5" />,
-    label: "Notifications",
-    href: "#",
+    // Updated icon: Bell -> Tag (common for pricing)
+    icon: <Tag className="h-5 w-5" />, 
+    label: "Pricing",
+    href: "priceing",
     gradient: "radial-gradient(circle, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.06) 50%, rgba(194,65,12,0) 100%)",
     iconColor: "group-hover:text-orange-500 dark:group-hover:text-orange-400",
   },
   {
-    icon: <Settings className="h-5 w-5" />,
-    label: "Settings",
-    href: "#",
+    icon: <FileQuestionMark className="h-5 w-5" />,
+    label: "Faq",
+    href: "/faq",
     gradient: "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
     iconColor: "group-hover:text-green-500 dark:group-hover:text-green-400",
   },
   {
     icon: <User className="h-5 w-5" />,
-    label: "Profile",
-    href: "#",
+    label: "Team",
+    href: "/team",
     gradient: "radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%, rgba(185,28,28,0) 100%)",
     iconColor: "group-hover:text-red-500 dark:group-hover:text-red-400",
   },
+  {
+    // Updated icon: User -> MessageSquareText (common for testimonials/feedback)
+    icon: <MessageSquareText className="h-5 w-5" />, 
+    label: "Testimonial",
+    href: "/testimonial",
+    gradient: "radial-gradient(circle, rgba(147,51,234,0.15) 0%, rgba(124,58,237,0.06) 50%, rgba(109,40,217,0) 100%)", // Changed gradient color
+    iconColor: "group-hover:text-purple-500 dark:group-hover:text-purple-400", // Changed icon color
+  },
 ];
 
-// Animation variants for different parts of the menu
+// Animation variants (kept the same, as they are independent of responsiveness)
 const itemVariants: Variants = {
   initial: { rotateX: 0, opacity: 1 },
   hover: { rotateX: -90, opacity: 0 },
@@ -91,7 +98,7 @@ const sharedTransition = {
 function MenuBar(): React.JSX.Element {
   return (
     <motion.nav
-      className="p-2 rounded-2xl bg-white/60 dark:bg-black/60 backdrop-blur-lg border border-gray-200/80 dark:border-gray-800/80 shadow-lg dark:shadow-gray-900/20 relative overflow-hidden"
+      className="p-1 sm:p-2 rounded-2xl bg-white/60 dark:bg-black/60 backdrop-blur-lg border border-gray-200/80 dark:border-gray-800/80 shadow-lg dark:shadow-gray-900/20 relative overflow-hidden w-auto mx-auto"
       initial="initial"
       whileHover="hover"
     >
@@ -102,7 +109,7 @@ function MenuBar(): React.JSX.Element {
         }}
         variants={navGlowVariants}
       />
-      <ul className="flex items-center gap-2 relative z-10">
+      <ul className="flex items-center justify-center gap-1 sm:gap-2 relative z-10">
         {menuItems.map((item: MenuItem) => (
           <motion.li key={item.label} className="relative">
             <motion.div
@@ -123,7 +130,8 @@ function MenuBar(): React.JSX.Element {
               {/* Front-facing menu item */}
               <motion.a
                 href={item.href}
-                className="flex items-center gap-2 px-4 py-2 relative z-10 bg-transparent text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors rounded-xl"
+                // Updated padding for small screen: py-2 -> py-2 px-3 sm:px-4
+                className="flex items-center justify-center gap-2 px-3 py-2 sm:px-4 relative z-10 bg-transparent text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors rounded-xl"
                 variants={itemVariants}
                 transition={sharedTransition}
                 style={{
@@ -134,12 +142,14 @@ function MenuBar(): React.JSX.Element {
                 <span className={`transition-colors duration-300 ${item.iconColor}`}>
                   {item.icon}
                 </span>
-                <span className="font-medium">{item.label}</span>
+                {/* Responsive label: hidden on default (small screen), block on sm and above */}
+                <span className="font-medium hidden sm:block">{item.label}</span> 
               </motion.a>
               {/* Back-facing menu item for the 3D flip effect */}
               <motion.a
                 href={item.href}
-                className="flex items-center gap-2 px-4 py-2 absolute inset-0 z-10 bg-transparent text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors rounded-xl"
+                // Updated padding for small screen: py-2 -> py-2 px-3 sm:px-4
+                className="flex items-center justify-center gap-2 px-3 py-2 sm:px-4 absolute inset-0 z-10 bg-transparent text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors rounded-xl"
                 variants={backVariants}
                 transition={sharedTransition}
                 style={{
@@ -151,7 +161,8 @@ function MenuBar(): React.JSX.Element {
                 <span className={`transition-colors duration-300 ${item.iconColor}`}>
                   {item.icon}
                 </span>
-                <span className="font-medium">{item.label}</span>
+                {/* Responsive label: hidden on default (small screen), block on sm and above */}
+                <span className="font-medium hidden sm:block">{item.label}</span>
               </motion.a>
             </motion.div>
           </motion.li>

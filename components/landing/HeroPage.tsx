@@ -1,4 +1,5 @@
 "use client"
+import Link from 'next/link';
 import React, { useState, useEffect, JSX } from 'react';
 
 // --- SVG ICONS (Original Logos) ---
@@ -176,16 +177,29 @@ export default function Hero5() {
                             SETUP, EASY-PEASY!
                         </div>
 
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mt-4 sm:mt-6 mb-4 sm:mb-6 leading-tight transition-colors duration-300">
-                            Hassle-free setup with<br className="hidden sm:block" />
-                            <span className="sm:hidden"> </span>all major development frameworks
-                        </h1>
+                        <div className="max-w-5xl mx-auto text-center mt-12 sm:mt-16 lg:mt-20 px-4">
+  {/* Main Headline */}
+  <h1 className="text-4xl sm:text-2xl md:text-4xl lg:text-7xl font-black tracking-tight">
+    <span className="block text-gray-900 dark:text-white leading-tight">
+      Describe your component
+    </span>
+    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 leading-tight">
+      Get production-ready code instantly
+    </span>
+  </h1>
 
-                        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed transition-colors duration-300">
-                            Collecting submissions with formcarry is super easy, there&apos;s no dependency
-                            needed by default and it works with all of the popular development frameworks.
-                        </p>
+  {/* Subheadline */}
+  <p className="mt-4 sm:mt-2  text-xl sm:text-2xl text-gray-600 dark:text-gray-300 font-medium max-w-3xl mx-auto leading-relaxed">
+    Just tell us what you need — a sleek toggle, glassmorphic card, animated button, 3D flip card, anything.
+    <br className="hidden sm:block" />
+    AI builds it perfectly in seconds. Tailwind + React + accessible + animated.
+  </p>
 
+  {/* Trust / Meta line (optional but converts like crazy) */}
+  <p className="mt-8 text-base sm:text-lg text-gray-500 dark:text-gray-400">
+    Powered by GEMNI 2.5 Flash • Over 120,000 components generated this month
+  </p>
+</div>
                         <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8 sm:mb-16">
                             {frameworks.map(fw => (
                                 <div key={fw.id}> {/* 🔑 Added missing key prop here */}
@@ -213,10 +227,10 @@ export default function Hero5() {
                     </div>
 
                     <div className={`text-center ${isVisible ? 'animate-slide-up animation-delay-400' : 'opacity-0'}`}>
-                        <button className="group inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-medium text-base sm:text-lg transition-all duration-200 hover:bg-gray-800 dark:hover:bg-gray-200 hover:scale-105 hover:shadow-lg">
-                            Explore Documentation
+                        <Link href={'/auth/login'} className="group inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-medium text-base sm:text-lg transition-all duration-200 hover:bg-gray-800 dark:hover:bg-gray-200 hover:scale-105 hover:shadow-lg">
+                            Start Now
                             <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 group-hover:translate-x-1" />
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

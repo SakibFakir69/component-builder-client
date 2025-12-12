@@ -10,10 +10,15 @@ import "prismjs/components/prism-jsx";
 import "prismjs/components/prism-typescript";
 import "prismjs/components/prism-json";
 import "prismjs/components/prism-css";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { CopyButton } from "@/components/copy";
-import { useGetMeQuery } from "@/lib/api/baseApi";
+import {
+  useGetMeQuery,
+  useLoginUserMutation,
+
+} from "@/lib/api/baseApi";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 
 interface Message {
@@ -43,14 +48,17 @@ const extractCode = (text: string) => {
 
 export default function ChatLayoutDemo() {
   const [history, setHistory] = useState<Conversation[]>([]);
-  const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
+  const [activeConversation, setActiveConversation] =
+    useState<Conversation | null>(null);
   const [input, setInput] = useState("");
   const [isHistoryVisible, setIsHistoryVisible] = useState(true);
-  const {data:getMe , isLoading} = useGetMeQuery('');
-  console.log(getMe , ' me ')
+  const { data: getMe, isLoading } = useGetMeQuery("");
+  const [logoutUser] = useLoginUserMutation();
+  console.log(getMe, " me ");
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-   const [showPreview, setShowPreview] = useState(true); // toggle for previe
+  const [showPreview, setShowPreview] = useState(true); // toggle for previe
+  const router = useRouter();
 
   // 🔥 Scroll bottom when new messages load
   useEffect(() => {
@@ -61,8 +69,6 @@ export default function ChatLayoutDemo() {
   useEffect(() => {
     Prism.highlightAll();
   }, [activeConversation]);
-
-
 
   // Fetch chat history
   useEffect(() => {
@@ -87,51 +93,49 @@ export default function ChatLayoutDemo() {
     fetchHistory();
   }, []);
 
-  // loadin 
+  // loadin
 
-
-  if(isLoading)
-  {
-    return <div className="w-full h-full justify-center items-center">
-      <h1 className="flex justify-center items-center mt-56">Loading....</h1>
-    </div>
+  if (isLoading) {
+    return (
+      <div className="w-full h-full justify-center items-center">
+        <h1 className="flex justify-center items-center mt-56">Loading....</h1>
+      </div>
+    );
   }
-
-  
 
   const x = async () => {
-  const newConversationId = uuidv4();
+    const newConversationId = uuidv4();
 
-  try {
-    // Call backend API to create new conversation
-    const res = await axios.post(
-      "http://localhost:5000/api/v1/prompt/create-prompt", // replace with your endpoint
-      {
-        sessionId: newConversationId,
-        prompt:prompt || "hey how are you"
-      },
-      { withCredentials: true }
-    );
+    try {
+      // Call backend API to create new conversation
+      const res = await axios.post(
+        "http://localhost:5000/api/v1/prompt/create-prompt", // replace with your endpoint
+        {
+          sessionId: newConversationId,
+          prompt: prompt || "hey how are you",
+        },
+        { withCredentials: true }
+      );
 
-    if (res.data.status) {
-      // Create local conversation object
-      const newConversation: Conversation = {
-        conversationId: newConversationId,
-        userId: "current-user-id",
-        messages: [],
-      };
+      if (res.data.status) {
+        // Create local conversation object
+        const newConversation: Conversation = {
+          conversationId: newConversationId,
+          userId: "current-user-id",
+          messages: [],
+        };
 
-      // Add to history & set active
-      setHistory(prev => [newConversation, ...prev]);
-      setActiveConversation(newConversation);
-      setInput("");
-    } else {
-      console.error("Failed to create conversation:", res.data);
+        // Add to history & set active
+        setHistory((prev) => [newConversation, ...prev]);
+        setActiveConversation(newConversation);
+        setInput("");
+      } else {
+        console.error("Failed to create conversation:", res.data);
+      }
+    } catch (err) {
+      console.error("API error:", err);
     }
-  } catch (err) {
-    console.error("API error:", err);
-  }
-};
+  };
 
   const handleSendMessage = async () => {
     if (!input.trim() || !activeConversation) return;
@@ -149,8 +153,8 @@ export default function ChatLayoutDemo() {
     };
 
     setActiveConversation(updatedConversation);
-    setHistory(prev =>
-      prev.map(conv =>
+    setHistory((prev) =>
+      prev.map((conv) =>
         conv.conversationId === activeConversation.conversationId
           ? updatedConversation
           : conv
@@ -183,8 +187,8 @@ export default function ChatLayoutDemo() {
         };
 
         setActiveConversation(updatedConversation);
-        setHistory(prev =>
-          prev.map(conv =>
+        setHistory((prev) =>
+          prev.map((conv) =>
             conv.conversationId === activeConversation.conversationId
               ? updatedConversation
               : conv
@@ -196,54 +200,60 @@ export default function ChatLayoutDemo() {
     }
   };
 
- 
+  const renderMessage = (msg: Message) => {
+    const codeData = extractCode(msg.content);
 
-const renderMessage = (msg: Message) => {
-  const codeData = extractCode(msg.content);
-  
-  if (codeData) {
-    const lang = codeData.lang.toLowerCase();
+    if (codeData) {
+      const lang = codeData.lang.toLowerCase();
 
-    return (
-      <div className="relative max-w-xl space-y-2">
-        {/* Copy + Preview toggle side by side */}
-        <div className="flex space-x-2 mb-1">
-          <CopyButton code={codeData.code} />
-          {["html", "javascript"].includes(lang) && (
-            <button
-              onClick={() => setShowPreview(prev => !prev)}
-              className="px-2 py-1 text-xs bg-black/70 text-white rounded hover:bg-black"
-            >
-              {showPreview ? "Hide Preview" : "Show Preview"}
-            </button>
-          )}
+      return (
+        <div className="relative max-w-xl space-y-2">
+          {/* Copy + Preview toggle side by side */}
+          <div className="flex space-x-2 mb-1">
+            <CopyButton code={codeData.code} />
+            {["html", "javascript"].includes(lang) && (
+              <button
+                onClick={() => setShowPreview((prev) => !prev)}
+                className="px-2 py-1 text-xs bg-black/70 text-white rounded hover:bg-black"
+              >
+                {showPreview ? "Hide Preview" : "Show Preview"}
+              </button>
+            )}
+          </div>
+
+          {/* Code block */}
+          <pre className="p-4 rounded-2xl bg-[#1e1e1e] text-[#cccccc] overflow-x-auto text-sm">
+            <code className={`language-${lang}`}>{codeData.code}</code>
+          </pre>
         </div>
+      );
+    }
 
-        {/* Code block */}
-        <pre className="p-4 rounded-2xl bg-[#1e1e1e] text-[#cccccc] overflow-x-auto text-sm">
-          <code className={`language-${lang}`}>{codeData.code}</code>
-        </pre>
-
-      
+    // Plain text message
+    return (
+      <div
+        className={`max-w-xl px-4 py-3 rounded-2xl whitespace-pre-wrap text-sm leading-relaxed ${
+          msg.role === "user"
+            ? "bg-black text-white rounded-br-none"
+            : "bg-gray-100 text-gray-900 rounded-bl-none"
+        }`}
+      >
+        {msg.content}
       </div>
     );
-  }
+  };
 
-  // Plain text message
-  return (
-    <div
-      className={`max-w-xl px-4 py-3 rounded-2xl whitespace-pre-wrap text-sm leading-relaxed ${
-        msg.role === "user"
-          ? "bg-black text-white rounded-br-none"
-          : "bg-gray-100 text-gray-900 rounded-bl-none"
-      }`}
-    >
-      {msg.content}
-    </div>
-  );
-};
+  // handle logout
 
- 
+  const handelLogOut = async () => {
+    try {
+      const res = await logoutUser("").unwrap();
+      router.push('/auth/login');
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">
@@ -275,7 +285,7 @@ const renderMessage = (msg: Message) => {
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-2">
-          {history.map(conv => (
+          {history.map((conv) => (
             <div
               key={conv.conversationId}
               onClick={() => setActiveConversation(conv)}
@@ -314,22 +324,22 @@ const renderMessage = (msg: Message) => {
               ? `Conversation ${activeConversation.conversationId}`
               : "Select a chat"}
           </h2>
-          <div className=" flex gap-x-5">
-            
-              <Link href={'/priceing'} className="text-blue-500">Buy Plan</Link>
+          <div className=" flex gap-x-5 items-center">
+            <Link href={"/dashboard/plan"} className="text-blue-500">
+              Buy Plan
+            </Link>
 
-            {
-              getMe && <button className=" flex bg-black text-white p-1.5 px-10 rounded">Log out</button>
-            }
-          
-
-
+            {getMe && (
+              <button onClick={handelLogOut} className=" flex bg-black text-white p-1.5 px-10 rounded">
+                Log out
+              </button>
+            )}
           </div>
         </div>
 
         {/* CHAT MESSAGES */}
         <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
-          {activeConversation?.messages.map(msg => (
+          {activeConversation?.messages.map((msg) => (
             <div
               key={msg._id}
               className={`flex ${
@@ -348,10 +358,10 @@ const renderMessage = (msg: Message) => {
             <input
               type="text"
               value={input}
-              onChange={e => setInput(e.target.value)}
+              onChange={(e) => setInput(e.target.value)}
               placeholder="Type a message..."
               className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black/40 outline-none"
-              onKeyDown={e => e.key === "Enter" && handleSendMessage()}
+              onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
             />
             <button
               onClick={handleSendMessage}

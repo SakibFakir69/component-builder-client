@@ -34,6 +34,16 @@ export const baseApi = createApi({
       }),
     }),
 
+    // logout user 
+
+    logoutUser:builder.mutation({
+      query:()=>({
+        url:'/auth/logout',
+        method:"POST"
+
+      })
+    }),
+
 
     // create prompt 
     createPrompt:builder.mutation({
@@ -59,5 +69,6 @@ export const {
   useLoginUserMutation,
   useGetMeQuery,
   usePromptHistoryQuery,
-  useCreatePromptMutation
+  useCreatePromptMutation,
+  useLogoutUserMutation
 } = baseApi;

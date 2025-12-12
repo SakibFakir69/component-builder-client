@@ -1,6 +1,9 @@
 
 
 
+import MultiStateToggle from '@/components/faq/page'
+import FaqPage from '@/components/faq/page'
+import ComponentShowcase from '@/components/faq/page'
 import Footer from '@/components/landing/Footer'
 import Hero5 from '@/components/landing/HeroPage'
 import MenuBar from '@/components/landing/Navbar'
@@ -12,17 +15,12 @@ import React from 'react'
 // redux 
 // chat ui 
 // add api login , reg , log out 
+import { IChildren } from '@/types'
 
-
-function page() {
+function page({children}:IChildren) {
   return (
     <div>
-      <MenuBar/>
-      <Hero5/>  
-      <PricingSection/>
-      <Testimonial/>
-      <TeamMember3/>
-      <Footer/>
+      
 
 
 

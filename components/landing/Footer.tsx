@@ -175,7 +175,7 @@ const Footer = () => {
               </defs>
             </svg>
             <h3 className="text-3xl font-extrabold text-blue-600 dark:text-teal-400">
-              SeraUI
+              CompBuilderAi
             </h3>
           </div>
           <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
