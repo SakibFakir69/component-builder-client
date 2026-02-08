@@ -40,7 +40,8 @@ export const baseApi = createApi({
     logoutUser:builder.mutation({
       query:()=>({
         url:'/auth/logout',
-        method:"POST"
+        method:"POST",
+        body:""
 
       })
     }),
@@ -72,6 +73,17 @@ export const baseApi = createApi({
         url:"/payment/get-payment",
         method:"GET"
       })
+    }),
+
+
+    // user 
+
+    createUser:builder.mutation({
+      query:(data)=>({
+        url:'/user/create-user',
+        method:"POST",
+        body:data
+      })
     })
 
   }),
@@ -84,5 +96,6 @@ export const {
   usePromptHistoryQuery,
   useGeneratePromptMutation,
   useLogoutUserMutation,
-  useGetPaymentQuery
+  useGetPaymentQuery,
+  useCreateUserMutation
 } = baseApi;

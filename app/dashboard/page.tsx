@@ -13,7 +13,7 @@ import "prismjs/components/prism-css";
 import { v4 as uuidv4 } from "uuid";
 import { CopyButton } from "@/components/copy";
 import {
-  useCreatePromptMutation,
+  
   useGeneratePromptMutation,
   useGetMeQuery,
   useLoginUserMutation,
@@ -22,6 +22,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useGetPayment } from "@/components/payment/GetPayment";
+import toast from "react-hot-toast";
 
 interface Message {
   _id: string;
@@ -36,7 +37,7 @@ interface Conversation {
   userId: string;
 }
 
-// 🔥 Function – detect & extract code blocks
+//  Function – detect & extract code blocks
 const extractCode = (text: string) => {
   const regex = /```(\w+)?\n([\s\S]*?)```/;
   const match = text.match(regex);
@@ -59,6 +60,7 @@ export default function ChatLayoutDemo() {
   const [logoutUser] = useLoginUserMutation();
   const [generatePrompt] = useGeneratePromptMutation();
   const { data: promptHistory } = usePromptHistoryQuery("");
+  const [ clickLoading , setClickLoading ] = useState(false);
   const [Loading, setLoading] = useState(false);
   console.log(getMe, " me ", promptHistory);
 
@@ -66,12 +68,12 @@ export default function ChatLayoutDemo() {
   const [showPreview, setShowPreview] = useState(true); // toggle for previe
   const router = useRouter();
 
-  // 🔥 Scroll bottom when new messages load
+  //  Scroll bottom when new messages load
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeConversation]);
 
-  // 🔥 Highlight Prism when new messages come
+  //  Highlight Prism when new messages come
   useEffect(() => {
     Prism.highlightAll();
   }, [activeConversation]);
@@ -100,40 +102,22 @@ export default function ChatLayoutDemo() {
     );
   }
 
-  const x = async () => {
-    const newConversationId = uuidv4();
 
-    try {
-      // Call backend API to create new conversation
-      const res = await axios.post(
-        "http://localhost:5000/api/v1/prompt/create-prompt", // replace with your endpoint
-        {
-          sessionId: newConversationId,
-          prompt: prompt || "hey how are you",
-        },
-        { withCredentials: true }
-      );
+const handleNewChat = () => {
+  const newConversationId = uuidv4();
 
-      if (res.data.status) {
-        // Create local conversation object
-        const newConversation: Conversation = {
-          conversationId: newConversationId,
-          userId: "current-user-id",
-          messages: [],
-        };
+  const newConversation: Conversation = {
 
-        // Add to history & set active
-        setHistory((prev) => [newConversation, ...prev]);
-        setActiveConversation(newConversation);
-        setInput("");
-      } else {
-        console.error("Failed to create conversation:", res.data);
-      }
-    } catch (err) {
-      console.error("API error:", err);
-    }
+    conversationId: newConversationId,
+    userId: getMe?._id,
+    messages: [],
   };
 
+  
+  setHistory((prev) => [newConversation, ...prev]);
+  setActiveConversation(newConversation);
+  setInput("");
+};
   const handleSendMessage = async () => {
     if (!input.trim() || !activeConversation) return;
 
@@ -170,42 +154,84 @@ export default function ChatLayoutDemo() {
     }
   };
 
-  const createPrompt = async (promptText: string, conversationId: string) => {
-    try {
-      const payload = {
-        prompt: promptText,
-        sessionId: conversationId,
+  // const createPrompt = async (promptText: string, conversationId: string) => {
+  //   try {
+  //     const payload = {
+  //       prompt: promptText,
+  //       sessionId: conversationId,
+  //     };
+  //     const res = await generatePrompt(payload).unwrap();
+  //     console.log(res, " create prompt");
+
+  //     if (res.data.status && activeConversation) {
+  //       const aiMessage: Message = {
+  //         _id: Date.now().toString() + "-ai",
+  //         role: "assistant",
+  //         content: res.data.ai,
+  //         timestamp: new Date().toISOString(),
+  //       };
+
+  //       const updatedConversation = {
+  //         ...activeConversation,
+  //         messages: [...activeConversation.messages, aiMessage],
+  //       };
+
+  //       setActiveConversation(updatedConversation);
+  //       setHistory((prev) =>
+  //         prev.map((conv) =>
+  //           conv.conversationId === activeConversation.conversationId
+  //             ? updatedConversation
+  //             : conv
+  //         )
+  //       );
+  //     }
+  //   } catch (err) {
+  //     console.log(err, "error from create prompt");
+  //   }
+  // };
+const createPrompt = async (promptText: string, conversationId: string) => {
+  try {
+    const payload = {
+      prompt: promptText,
+      sessionId: conversationId,
+    };
+    
+   
+    const res = await generatePrompt(payload).unwrap();
+
+
+    const aiContent = res?.data?.ai || res?.ai;
+
+    if (aiContent && activeConversation) {
+      const aiMessage: Message = {
+        _id: uuidv4() + "-ai",
+        role: "assistant",
+        content: aiContent,
+        timestamp: new Date().toISOString(),
       };
-      const res = await generatePrompt(payload).unwrap();
-      console.log(res, " create prompt");
 
-      if (res.data.status && activeConversation) {
-        const aiMessage: Message = {
-          _id: Date.now().toString() + "-ai",
-          role: "assistant",
-          content: res.data.ai,
-          timestamp: new Date().toISOString(),
-        };
+      const updatedConversation = {
+        ...activeConversation,
+        messages: [...activeConversation.messages, aiMessage],
+      };
 
-        const updatedConversation = {
-          ...activeConversation,
-          messages: [...activeConversation.messages, aiMessage],
-        };
-
-        setActiveConversation(updatedConversation);
-        setHistory((prev) =>
-          prev.map((conv) =>
-            conv.conversationId === activeConversation.conversationId
-              ? updatedConversation
-              : conv
-          )
-        );
-      }
-    } catch (err) {
-      console.log(err, "error from create prompt");
+      setActiveConversation(updatedConversation);
+      setHistory((prev) =>
+        prev.map((conv) =>
+          conv.conversationId === conversationId ? updatedConversation : conv
+        )
+      );
     }
-  };
-
+  } catch (err: any) {
+    // 429 Handling
+    if (err.status === 429 || err.data?.error?.status === 429) {
+      toast.error("Slow down! You've sent too many messages. Please wait 1 minute.")
+   
+    } else {
+      console.error("Failed to get AI response:", err);
+    }
+  }
+};
   const renderMessage = (msg: Message) => {
     const codeData = extractCode(msg.content);
 
@@ -259,10 +285,9 @@ export default function ChatLayoutDemo() {
       console.log(error);
     }
   };
+  console.log(clickLoading , 'click laoding')
+  console.log(Loading , ' loading because before get compoenent show load')
 
-  console.log(getPayment?.data[0], " payment", getPayment);
-
-  console.log(Loading, ' loading')
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">
@@ -282,7 +307,8 @@ export default function ChatLayoutDemo() {
           <div className="flex justify-between w-full">
             <h2 className="font-semibold text-lg text-gray-800">Chats</h2>
             <button className="border">
-              <PlusCircle onClick={x} color="black" />
+              {clickLoading===true && <p className="text-black">...</p>}
+              {clickLoading===false && <PlusCircle onClick={handleNewChat} color="black" />}
             </button>
           </div>
           <button
@@ -334,16 +360,16 @@ export default function ChatLayoutDemo() {
               : "Select a chat"}
           </h2>
           <div className=" flex gap-x-5 items-center">
-            {getPayment?.data[0].planName && (
+            {getPayment?.data[0]?.planName && (
               <div>
                 <h1 className="text-black">
                   {getPayment?.data[0]?.planName || "buy"}
                 </h1>
               </div>
             )}
-            {!getPayment?.data[0].planName && (
+            {!getPayment?.data[0]?.planName && (
               <div>
-                <Link href={"/dashboard/plan"}>Buy Plan</Link>
+                <Link className="text-blue-600" href={"/dashboard/plan"}>Buy Plan</Link>
               </div>
             )}
 

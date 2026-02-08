@@ -4,6 +4,7 @@ import { API_CALL } from '@/constant';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -32,6 +33,8 @@ export default function Login() {
       const res = await axios.post(`${API_CALL}/auth/login-user`, payload,{
         withCredentials:true
       });
+
+      // if role: Admin send admin dashboard
 
       setSuccessMsg("Login successful!");
       console.log("User logged in:", res.data);
@@ -107,7 +110,7 @@ export default function Login() {
 
         <p className="text-sm text-center text-gray-600 dark:text-gray-300 mt-4">
           Don't have an account?
-          <a href="#" className="ml-1 text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-700">Sign Up</a>
+          <Link  href={`/auth/register`} className="ml-1 text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-700">Sign Up</Link>
         </p>
       </div>
     </div>
