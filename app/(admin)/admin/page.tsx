@@ -2,10 +2,13 @@
 
 import React from 'react'
 
-function page() {
+function AdminHomePage() {
   return (
-    <div>page</div>
+    <div>
+        
+<h1>admin page</h1>
+    </div>
   )
 }
 
-export default page
+export default AdminHomePage;

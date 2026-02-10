@@ -1,25 +1,26 @@
-'use client';
+"use client";
 
-import { API_CALL } from '@/constant';
-import axios from 'axios';
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { API_CALL } from "@/constant";
+import axios from "axios";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { data } from "framer-motion/client";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
+    setErrorMsg("");
+    setSuccessMsg("");
     setLoading(true);
 
     try {
@@ -30,21 +31,29 @@ export default function Login() {
       }
 
       const payload = { email, password };
-      const res = await axios.post(`${API_CALL}/auth/login-user`, payload,{
-        withCredentials:true
+
+      const res = await axios.post(`${API_CALL}/auth/login-user`, payload, {
+        withCredentials: true,
       });
 
-      // if role: Admin send admin dashboard
+      const role = res?.data?.data?.userData?.role;
+      console.log(role);
+      
+
+    
+
+   
+
+      if (role === "Admin") {
+        console.log("admin");
+        router.push("/admin");
+
+      } else {
+        router.push("/dashboard");
+      }
 
       setSuccessMsg("Login successful!");
       console.log("User logged in:", res.data);
-
-      // OPTIONAL: Save token
-      // localStorage.setItem("token", res.data.token);
-
-      // Navigate to dashboard
-      router.push('/dashboard');
-
     } catch (error: any) {
       setErrorMsg(error?.response?.data?.message || "Login failed!");
     } finally {
@@ -55,13 +64,19 @@ export default function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
       <div className="w-full max-w-md p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-        <h1 className="text-2xl font-semibold text-center text-gray-900 dark:text-white mb-2">Welcome Back</h1>
-        <p className="text-sm text-center text-gray-600 dark:text-gray-300 mb-6">Login to continue</p>
+        <h1 className="text-2xl font-semibold text-center text-gray-900 dark:text-white mb-2">
+          Welcome Back
+        </h1>
+        <p className="text-sm text-center text-gray-600 dark:text-gray-300 mb-6">
+          Login to continue
+        </p>
 
         <form className="space-y-4" onSubmit={handleLogin}>
           {/* Email */}
           <div>
-            <label className="text-sm font-medium text-gray-900 dark:text-gray-50">Email</label>
+            <label className="text-sm font-medium text-gray-900 dark:text-gray-50">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -73,7 +88,9 @@ export default function Login() {
 
           {/* Password */}
           <div>
-            <label className="text-sm font-medium text-gray-900 dark:text-gray-50">Password</label>
+            <label className="text-sm font-medium text-gray-900 dark:text-gray-50">
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -93,10 +110,18 @@ export default function Login() {
           </div>
 
           {/* Error Message */}
-          {errorMsg && <p className="text-sm text-red-600 bg-red-100 dark:bg-red-900 p-2 rounded">{errorMsg}</p>}
+          {errorMsg && (
+            <p className="text-sm text-red-600 bg-red-100 dark:bg-red-900 p-2 rounded">
+              {errorMsg}
+            </p>
+          )}
 
           {/* Success Message */}
-          {successMsg && <p className="text-sm text-green-600 bg-green-100 dark:bg-green-900 p-2 rounded">{successMsg}</p>}
+          {successMsg && (
+            <p className="text-sm text-green-600 bg-green-100 dark:bg-green-900 p-2 rounded">
+              {successMsg}
+            </p>
+          )}
 
           {/* Submit Button */}
           <button
@@ -110,7 +135,12 @@ export default function Login() {
 
         <p className="text-sm text-center text-gray-600 dark:text-gray-300 mt-4">
           Don't have an account?
-          <Link  href={`/auth/register`} className="ml-1 text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-700">Sign Up</Link>
+          <Link
+            href={`/auth/register`}
+            className="ml-1 text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-700"
+          >
+            Sign Up
+          </Link>
         </p>
       </div>
     </div>
