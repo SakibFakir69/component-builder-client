@@ -1,14 +1,14 @@
+import React from "react";
 
-
-import React from 'react'
-
-function AdminHomePage() {
+function AdminDashBoardPage() {
   return (
     <div>
-        
-<h1>admin page</h1>
+      {/* side bar */}
+<h1 className="text-4xl ml-20">Hello world</h1>
+      {/* main  */}
+      <main>admin</main>
     </div>
-  )
+  );
 }
 
-export default AdminHomePage;
+export default AdminDashBoardPage;
