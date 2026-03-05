@@ -7,7 +7,7 @@ export const baseApi = createApi({
     baseUrl: process.env.NEXT_BACKEND_URL || "http://localhost:5000/api/v1",
     credentials: "include",
   }),
-  tagTypes: ["Prompt","User"],
+  tagTypes: ["Prompt","User","Payment"],
 
   endpoints: (builder) => ({
     // Register user
@@ -71,6 +71,15 @@ export const baseApi = createApi({
         method: "GET",
       }),
     }),
+    // get single user payment details
+
+    getSingleUserPaymentDetails:builder.query({
+      query:({userId})=>({
+        url:`/users/payments/${userId}`,
+        method:"GET"
+      }),
+      providesTags:['Payment']
+    }),
 
     // user
 
@@ -99,9 +108,8 @@ export const baseApi = createApi({
     }),
 
 
-    // 3/2/2026
-    // delete user 
-    // learning tag , provide tag , invalid tag 
+   
+   
   deleteHandelByAdmin: builder.mutation({
     query:(userId)=>({
       url:`/admin/users/${userId}`,
