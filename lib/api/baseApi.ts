@@ -71,6 +71,15 @@ export const baseApi = createApi({
         method: "GET",
       }),
     }),
+
+    // get all payment
+    getAllPayment:builder.query({
+      query:()=>({
+        url:'/admin/payments',
+        method:"GET"
+      })
+
+    }),
     // get single user payment details
 
     getSingleUserPaymentDetails:builder.query({
@@ -134,5 +143,6 @@ export const {
   useCreateUserMutation,
   useGetAllUserByAdminQuery,
   useDeleteHandelByAdminMutation ,
-   useGetSingleUserPaymentDetailsQuery
+   useGetSingleUserPaymentDetailsQuery,
+   useGetAllPaymentQuery
 } = baseApi;

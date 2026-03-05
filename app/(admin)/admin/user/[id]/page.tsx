@@ -1,13 +1,9 @@
 // page route vs app route
 "use client";
 
-import { IChildren } from "@/types";
-import { useParams } from "next/navigation";
-import React from "react";
 
-interface IParams {
-  userId: string;
-}
+import { useParams } from "next/navigation";
+
 
 function UserPaymentDetails() {
   const userId = useParams();
