@@ -18,6 +18,7 @@ import {
 import LoadingStat from "@/components/admin/LoadingStat";
 import Image from "next/image";
 import toast, { Toaster } from "react-hot-toast";
+import Link from "next/link";
 
 const UserManagement = () => {
   const [searchText, setSearchText] = useState("");
@@ -176,7 +177,12 @@ const UserManagement = () => {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-1">
-                      <button className="p-2.5 text-slate-400 hover:text-indigo-400 hover:bg-indigo-400/10 rounded-xl transition-all"><Eye size={20} /></button>
+
+                 
+                      <Link className="p-2.5 text-slate-400 hover:text-indigo-400 hover:bg-indigo-400/10 rounded-xl transition-all" href={`/admin/user/${user._id}`}> 
+                      <Eye size={20}/>
+                      </Link>
+                      
                       <button className="p-2.5 text-slate-400 hover:text-amber-400 hover:bg-amber-400/10 rounded-xl transition-all"><ShieldAlert size={20} /></button>
                       <button onClick={() => handleDeleteUser(user._id)} className="p-2.5 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all"><Trash2 size={20} /></button>
                     </div>

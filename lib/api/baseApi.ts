@@ -133,5 +133,6 @@ export const {
   useGetPaymentQuery,
   useCreateUserMutation,
   useGetAllUserByAdminQuery,
-  useDeleteHandelByAdminMutation
+  useDeleteHandelByAdminMutation ,
+   useGetSingleUserPaymentDetailsQuery
 } = baseApi;
