@@ -1,19 +1,29 @@
 // page route vs app route
 "use client";
 
-
+import LoadingStat from "@/components/admin/LoadingStat";
+import { useGetSingleUserPaymentDetailsQuery } from "@/lib/api/baseApi";
 import { useParams } from "next/navigation";
-
+import { useEffect } from "react";
 
 function UserPaymentDetails() {
-  const userId = useParams();
-  console.log(userId);
+  const params = useParams();
+
+  const userId = params?.id;
+
+  const { data, isLoading } = useGetSingleUserPaymentDetailsQuery(
+    { userId },
+    { skip: !userId },
+    
+  );
+  console.log(data ,  ' data')
+
+  if (isLoading) return <LoadingStat />;
 
   return (
     <div>
-        <h1>User payment details</h1>
-      {userId && userId._id }
-    
+      <h1>User payment details</h1>
+      {userId && userId._id}
     </div>
   );
 }

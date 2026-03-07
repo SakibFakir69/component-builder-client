@@ -23,7 +23,8 @@ function  AdminPaymentViewPage() {
       {
         paymentData?.map((payment:IPaymentProps, key:number)=>(<div key={key}>
 
-          <PaymentCard  expiresAt={payment.expiresAt} planName={payment.planName} price={payment.price}/>
+          <PaymentCard  paymentData={paymentData}/>
+          
         </div>) 
         )
         

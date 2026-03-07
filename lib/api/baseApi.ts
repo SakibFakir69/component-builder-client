@@ -84,7 +84,8 @@ export const baseApi = createApi({
 
     getSingleUserPaymentDetails:builder.query({
       query:({userId})=>({
-        url:`/users/payments/${userId}`,
+        
+        url:`/admin/users/payments/${userId}`,
         method:"GET"
       }),
       providesTags:['Payment']
