@@ -183,7 +183,7 @@ const UserManagement = () => {
                       <Eye size={20}/>
                       </Link>
                       
-                      <button className="p-2.5 text-slate-400 hover:text-amber-400 hover:bg-amber-400/10 rounded-xl transition-all"><ShieldAlert size={20} /></button>
+                     
                       <button onClick={() => handleDeleteUser(user._id)} className="p-2.5 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all"><Trash2 size={20} /></button>
                     </div>
                   </td>

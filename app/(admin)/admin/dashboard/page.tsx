@@ -1,28 +1,42 @@
-import { Users, CreditCard, Activity, TrendingUp } from 'lucide-react';
-import { StatCard } from '@/components/admin/StatCard';
+import { Users, CreditCard, Activity, TrendingUp } from "lucide-react";
+import { StatCard } from "@/components/admin/StatCard";
+import { useAdminDashboardInfoQuery } from "@/lib/api/baseApi";
+import LoadingStat from "@/components/admin/LoadingStat";
 
 export default function AdminStatsGrid({ users, payments }: any) {
-  
-  // Logic to calculate totals from your Express API response
-  const totalRevenue = payments?.reduce((acc: number, curr: any) => acc + curr.amount, 0) || 0;
-  const userCount = users?.length || 0;
+  const { data: adminInfo, isLoading } = useAdminDashboardInfoQuery(null);
 
+  const activePlan = adminInfo?.data?.activePlan || 0;
+  const totalPayment = adminInfo?.data?.
+totalPayment || 0;
+const paymentCount = adminInfo?.data?.totalPaymentCount || 0;
+const totalUser = adminInfo?.data?.totalUser
+ || 0;
+
+
+
+
+  if (isLoading) return <LoadingStat />;
+
+  // Logic to calculate totals from your Express API response
+  const totalRevenue =
+    payments?.reduce((acc: number, curr: any) => acc + curr.amount, 0) || 0;
+ 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {/* Total Users - tied to GET /users */}
-      <StatCard 
+      <StatCard
         title="Total Customers"
-        value={userCount.toLocaleString()}
+        value={totalUser}
         icon={<Users size={24} />}
-        trend="12%"
-        trendType="positive"
+     
         color="blue"
       />
 
       {/* Total Revenue - tied to GET /payments */}
-      <StatCard 
+      <StatCard
         title="Total Revenue"
-        value={`$${totalRevenue.toLocaleString()}`}
+        value={`$${totalPayment}`}
         icon={<CreditCard size={24} />}
         trend="8.4%"
         trendType="positive"
@@ -30,17 +44,17 @@ export default function AdminStatsGrid({ users, payments }: any) {
       />
 
       {/* Active Sessions - tied to Activity */}
-      <StatCard 
+      <StatCard
         title="Active Now"
-        value="42"
+        value={activePlan}
         icon={<Activity size={24} />}
         color="amber"
       />
 
       {/* Deletion/Churn Rate - relevant to your DELETE /users/:id route */}
-      <StatCard 
+      <StatCard
         title="Churn Rate"
-        value="2.1%"
+        value={activePlan}
         icon={<TrendingUp size={24} />}
         trend="0.5%"
         trendType="negative"

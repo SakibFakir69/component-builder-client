@@ -16,7 +16,6 @@ function  AdminPaymentViewPage() {
 
 
 
-
   return (
     <div>
 

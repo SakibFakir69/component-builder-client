@@ -4,7 +4,7 @@
 import LoadingStat from "@/components/admin/LoadingStat";
 import { useGetSingleUserPaymentDetailsQuery } from "@/lib/api/baseApi";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
+
 
 function UserPaymentDetails() {
   const params = useParams();
@@ -14,7 +14,7 @@ function UserPaymentDetails() {
   const { data, isLoading } = useGetSingleUserPaymentDetailsQuery(
     { userId },
     { skip: !userId },
-    
+
   );
   console.log(data ,  ' data')
 
@@ -23,7 +23,7 @@ function UserPaymentDetails() {
   return (
     <div>
       <h1>User payment details</h1>
-      {userId && userId._id}
+      {userId}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { url } from "inspector";
+import build from "next/dist/build";
 
 export const baseApi = createApi({
   reducerPath: "api",
@@ -127,7 +128,18 @@ export const baseApi = createApi({
 
     }),
     invalidatesTags:['User']
+  }),
+
+
+  // ADMIN DASHBOARD
+  adminDashboardInfo : builder.query({
+    query:()=>({
+      url:'/admin/dashboard',
+      method:"GET"
+    })
   })
+
+
   
 
   }),
@@ -145,5 +157,7 @@ export const {
   useGetAllUserByAdminQuery,
   useDeleteHandelByAdminMutation ,
    useGetSingleUserPaymentDetailsQuery,
-   useGetAllPaymentQuery
+   useGetAllPaymentQuery,
+   useAdminDashboardInfoQuery
+  
 } = baseApi;

@@ -48,16 +48,7 @@ export default function DashboardPage() {
             </p>
         </div>
 
-        <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-3xl p-8 text-white shadow-xl shadow-indigo-500/20">
-            <CardIcon className="mb-4 opacity-80" size={32} />
-            <h3 className="text-xl font-bold">Revenue Projections</h3>
-            <p className="text-indigo-100 mt-2 text-sm leading-relaxed">
-                Based on your {MOCK_PAYMENTS.length} recent transactions, your growth is steady. Keep track of failures in the payment logs.
-            </p>
-            <button className="mt-6 w-full py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl font-bold text-sm transition-colors">
-                View Reports
-            </button>
-        </div>
+       
       </div>
     </div>
   );

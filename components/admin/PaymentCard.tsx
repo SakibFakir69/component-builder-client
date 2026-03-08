@@ -20,7 +20,7 @@ import toast, { Toaster } from "react-hot-toast";
 // Updated Interface to match the detailed UX
 export interface IPayment {
   _id: string;
-  userName: string;
+  name: string;
   userEmail: string;
   planName: string;
   price: number | string;
@@ -32,7 +32,9 @@ const PaymentManagement = ({ paymentData }: { paymentData: IPayment[] }) => {
 
   // add user , name 
   //  gave pagination button  , load more
-  console.log(paymentData , ' payment data')
+  console.log(paymentData , ' payment data');
+
+
  
 
   return (
@@ -75,7 +77,7 @@ const PaymentManagement = ({ paymentData }: { paymentData: IPayment[] }) => {
                     <td className="px-6 py-4">
                       <div>
                         <div className="font-bold text-white group-hover:text-indigo-300 transition-colors">
-                          {payment.userName}
+                          {payment?.name || "Guest"}
                         </div>
                         <div className="text-sm text-slate-500">{payment.userEmail}</div>
                       </div>

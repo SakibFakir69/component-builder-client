@@ -27,7 +27,7 @@
     { id: 0, title: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { id: 1, title: "Users", href: "/admin/user", icon: Users },
     { id: 2, title: "Payments", href: "/admin/payment", icon: CreditCard },
-    { id: 3, title: "Settings", href: "/admin/settings", icon: Settings },
+   
   ];
 
   interface SidebarProps {
