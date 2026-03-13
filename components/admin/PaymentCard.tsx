@@ -30,8 +30,6 @@ export interface IPayment {
 
 const PaymentManagement = ({ paymentData }: { paymentData: IPayment[] }) => {
 
-  // add user , name 
-  //  gave pagination button  , load more
   console.log(paymentData , ' payment data');
 
 

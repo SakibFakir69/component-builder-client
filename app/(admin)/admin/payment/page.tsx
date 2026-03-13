@@ -1,7 +1,7 @@
 'use client'
 
 import LoadingStat from '@/components/admin/LoadingStat';
-import PaymentCard, { IPaymentProps } from '@/components/admin/PaymentCard';
+import PaymentCard from '@/components/admin/PaymentCard';
 import { useGetAllPaymentQuery } from '@/lib/api/baseApi'
 
 
@@ -19,15 +19,7 @@ function  AdminPaymentViewPage() {
   return (
     <div>
 
-      {
-        paymentData?.map((payment:IPaymentProps, key:number)=>(<div key={key}>
-
-          <PaymentCard  paymentData={paymentData}/>
-          
-        </div>) 
-        )
-        
-      }
+      <PaymentCard  paymentData={paymentData}/>
         
 
 
