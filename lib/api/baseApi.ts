@@ -137,6 +137,27 @@ export const baseApi = createApi({
       url:'/admin/dashboard',
       method:"GET"
     })
+  }),
+
+  // USER GRAPH API
+
+  userGraph:builder.query({
+    query:()=>({
+      url:"/admin/users-graph",
+      method:"GET"
+    }),
+    providesTags:['User']
+  })
+,
+
+  // PAYMENT GRAPH 
+  paymentGraph:builder.query({
+    query:()=>({
+      url:"/admin/payments-graph",
+      method:"GET"
+
+    }),
+    providesTags:['User']
   })
 
 
@@ -158,6 +179,8 @@ export const {
   useDeleteHandelByAdminMutation ,
    useGetSingleUserPaymentDetailsQuery,
    useGetAllPaymentQuery,
-   useAdminDashboardInfoQuery
+   useAdminDashboardInfoQuery,
+   useUserGraphQuery,
+   usePaymentGraphQuery
   
 } = baseApi;

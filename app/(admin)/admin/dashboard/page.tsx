@@ -7,21 +7,16 @@ export default function AdminStatsGrid({ users, payments }: any) {
   const { data: adminInfo, isLoading } = useAdminDashboardInfoQuery(null);
 
   const activePlan = adminInfo?.data?.activePlan || 0;
-  const totalPayment = adminInfo?.data?.
-totalPayment || 0;
-const paymentCount = adminInfo?.data?.totalPaymentCount || 0;
-const totalUser = adminInfo?.data?.totalUser
- || 0;
-
-
-
+  const totalPayment = adminInfo?.data?.totalPayment || 0;
+  const paymentCount = adminInfo?.data?.totalPaymentCount || 0;
+  const totalUser = adminInfo?.data?.totalUser || 0;
 
   if (isLoading) return <LoadingStat />;
 
   // Logic to calculate totals from your Express API response
   const totalRevenue =
     payments?.reduce((acc: number, curr: any) => acc + curr.amount, 0) || 0;
- 
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {/* Total Users - tied to GET /users */}
@@ -29,7 +24,6 @@ const totalUser = adminInfo?.data?.totalUser
         title="Total Customers"
         value={totalUser}
         icon={<Users size={24} />}
-     
         color="blue"
       />
 
@@ -53,7 +47,7 @@ const totalUser = adminInfo?.data?.totalUser
 
       {/* Deletion/Churn Rate - relevant to your DELETE /users/:id route */}
       <StatCard
-        title="Churn Rate"
+        title="Active Plan"
         value={activePlan}
         icon={<TrendingUp size={24} />}
         trend="0.5%"

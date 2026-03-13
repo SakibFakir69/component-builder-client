@@ -4,9 +4,16 @@ import React from 'react';
 import { MOCK_PAYMENTS, MOCK_USERS } from '@/lib/data/data';
 import { LayoutDashboard, RefreshCcw, UserCheck, CreditCard as CardIcon } from 'lucide-react';
 import AdminStatsGrid from './dashboard/page';
+import { useUserGraphQuery } from '@/lib/api/baseApi';
+import LoadingStat from '@/components/admin/LoadingStat';
+import { Bar, BarChart, XAxis, YAxis } from 'recharts';
+import UserGrowthChart from '@/components/admin/BarChart';
+import PaymentGraph from '@/components/admin/PaymentGraph';
 
 
 export default function DashboardPage() {
+ 
+
   return (
     <div className="space-y-8">
       {/* Dashboard Header */}
@@ -37,16 +44,16 @@ export default function DashboardPage() {
       />
 
       {/* Quick Actions / Recent Activity Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 flex flex-col items-center justify-center min-h-[300px] text-center">
-            <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
-                <UserCheck className="text-slate-400" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">User Analytics</h3>
-            <p className="text-slate-500 max-w-sm mt-2 text-sm">
-                Detailed data tables for your {MOCK_USERS.length} users will be rendered in this section.
-            </p>
-        </div>
+      <div className="md:flex justify-between gap-6 ">
+       
+      
+      <div className='flex flex-1 ' >
+        <UserGrowthChart/>
+      </div>
+
+      <div className='flex flex-1 md:mt-0 mt-10'>
+        <PaymentGraph/>
+      </div>
 
        
       </div>
