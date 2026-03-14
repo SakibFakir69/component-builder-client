@@ -108,7 +108,7 @@ console.log({email,role,name}, ' get me')
             </div>
             {isOpen && (
               <span className="font-bold text-xl tracking-tight text-white whitespace-nowrap animate-in fade-in slide-in-from-left-4 duration-300">
-                Admin<span className="text-emerald-500">Pro</span>
+                CompBuilder<span className="text-emerald-500">AI</span>
               </span>
             )}
           </div>

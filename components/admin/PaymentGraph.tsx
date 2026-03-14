@@ -43,7 +43,12 @@ function PaymentGraph() {
 
   return (
     <div className="w-full md:h-auto h-[450px] bg-[#1e293b] p-6 rounded-xl shadow-2xl border border-slate-700">
-      <h3 className="text-lg font-semibold mb-8 text-white">Monthly Revenue</h3>
+     
+     <div className='mb-8'> 
+       <h3 className="text-lg font-semibold  text-white">Monthly Revenue</h3>
+       <p className='text-sm text-gray-400'>Monthly registration performance</p>
+     </div>
+      
       
       <ResponsiveContainer width="100%" height="85%">
         <BarChart data={formattedData} margin={{ top: 0, right: 10, left: -15, bottom: 0 }}>
