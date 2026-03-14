@@ -1,6 +1,5 @@
 "use client"
 import AdminSidebar from "@/components/sidebar/SideBar";
-import AdminDashBoardSideBar from "@/components/sidebar/SideBar";
 import { IChildren } from "@/types";
 import { useState } from "react";
 

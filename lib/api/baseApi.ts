@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { url } from "inspector";
-import build from "next/dist/build";
+
 
 export const baseApi = createApi({
   reducerPath: "api",
@@ -38,13 +37,12 @@ export const baseApi = createApi({
 
     // logout user
 
-    logoutUser: builder.mutation({
-      query: () => ({
-        url: "/auth/logout",
-        method: "POST",
-        body: "",
-      }),
-    }),
+ logoutUser: builder.mutation<void, void>({  // <ResultType, ArgType>
+  query: () => ({
+    url: "/auth/logout",
+    method: "POST",
+  }),
+}),
 
     // create prompt
     generatePrompt: builder.mutation({
