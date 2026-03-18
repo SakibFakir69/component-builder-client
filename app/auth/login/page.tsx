@@ -5,7 +5,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { data } from "framer-motion/client";
+
 
 export default function Login() {
   const [email, setEmail] = useState("");

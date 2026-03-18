@@ -1,3 +1,5 @@
+"use client"
+
 import { Users, CreditCard, Activity, TrendingUp } from "lucide-react";
 import { StatCard } from "@/components/admin/StatCard";
 import { useAdminDashboardInfoQuery } from "@/lib/api/baseApi";

@@ -17,12 +17,13 @@ import {
   useGeneratePromptMutation,
   useGetMeQuery,
   useLoginUserMutation,
+  useLogoutUserMutation,
   usePromptHistoryQuery,
 } from "@/lib/api/baseApi";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useGetPayment } from "@/components/payment/GetPayment";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 interface Message {
   _id: string;
@@ -57,7 +58,7 @@ export default function ChatLayoutDemo() {
   const [isHistoryVisible, setIsHistoryVisible] = useState(true);
   const { getPayment } = useGetPayment();
   const { data: getMe, isLoading } = useGetMeQuery("");
-  const [logoutUser] = useLoginUserMutation();
+  const [logoutUser] = useLogoutUserMutation();
   const [generatePrompt] = useGeneratePromptMutation();
   const { data: promptHistory } = usePromptHistoryQuery("");
   const [ clickLoading , setClickLoading ] = useState(false);
@@ -277,12 +278,20 @@ const createPrompt = async (promptText: string, conversationId: string) => {
   // handle logout
 
   const handelLogOut = async () => {
+    console.log("handle logout")
+
     try {
-      const res = await logoutUser("").unwrap();
+      const res = await logoutUser().unwrap();
+
       router.push("/auth/login");
-      console.log(res);
+      console.log(res , ' logout');
+      toast.success("User LogOut Successfully",{
+        duration:1000
+      });
+
     } catch (error) {
       console.log(error);
+      
     }
   };
   console.log(clickLoading , 'click laoding')
@@ -292,6 +301,7 @@ const createPrompt = async (promptText: string, conversationId: string) => {
   return (
     <div className="flex h-screen bg-white overflow-hidden">
       {/* LEFT SIDEBAR */}
+      <Toaster position="top-right"/>
       <div
         className={`absolute inset-y-0 left-0 z-20 
         md:relative md:w-72 md:flex md:flex-col
@@ -350,11 +360,11 @@ const createPrompt = async (promptText: string, conversationId: string) => {
         <div className="px-4 py-3 border-b border-gray-200 bg-white flex items-center justify-between">
           <button
             onClick={() => setIsHistoryVisible(!isHistoryVisible)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 text-black"
           >
             ☰
           </button>
-          <h2 className="font-semibold text-gray-800 text-lg">
+          <h2 className="font-semibold text-gray-800 text-lg lg:block hidden">
             {activeConversation
               ? `Conversation ${activeConversation.conversationId}`
               : "Select a chat"}
@@ -362,7 +372,7 @@ const createPrompt = async (promptText: string, conversationId: string) => {
           <div className=" flex gap-x-5 items-center">
             {getPayment?.data[0]?.planName && (
               <div>
-                <h1 className="text-black">
+                <h1 className="text-black lg:block hidden">
                   {getPayment?.data[0]?.planName || "buy"}
                 </h1>
               </div>
@@ -385,7 +395,7 @@ const createPrompt = async (promptText: string, conversationId: string) => {
         </div>
 
         {/* CHAT MESSAGES */}
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+        <div className="flex-1 overflow-y-auto sm:px-6 sm:py-6 px-3 py-3 space-y-4">
           {activeConversation?.messages.map((msg) => (
             <div
               key={msg._id}
@@ -432,7 +442,9 @@ const createPrompt = async (promptText: string, conversationId: string) => {
               ➤
             </button>
           </div>
+
         </div>
+        
       </div>
     </div>
   );

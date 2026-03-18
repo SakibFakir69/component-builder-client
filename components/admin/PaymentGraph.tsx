@@ -16,7 +16,6 @@ function PaymentGraph() {
   const { data: userPaymentData, isLoading } = usePaymentGraphQuery(null);
   const rawData = userPaymentData?.data || [];
 
-  // FIXED: Accessing year/month from the _id object
   const formattedData = rawData.map((item) => {
     const year = item._id?.year;
     const month = item._id?.month;

@@ -12,6 +12,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   return (
     <ReduxProvider>
+      
       {!isDashboard && <MenuBar />}
       {children}
       {!isDashboard && <Footer />}

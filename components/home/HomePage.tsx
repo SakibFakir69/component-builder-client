@@ -1,6 +1,7 @@
+
+
 import Hero5 from "@/components/landing/HeroPage";
 import React from "react";
-import PricingSection from "../priceing/page";
 import Testimonial from "@/components/landing/Testimonial";
 import TeamMember3 from "@/components/landing/OurTeam";
 import FaqPage from "@/components/faq/page";

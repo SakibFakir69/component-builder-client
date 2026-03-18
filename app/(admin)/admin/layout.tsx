@@ -9,7 +9,7 @@ function AdminLayouts({ children }: IChildren) {
   const [isOpen, setIsOpen] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  console.log(isOpen ,isMobileOpen , ' admin side bar value');
+  
   
   return (
     <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">

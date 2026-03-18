@@ -4,6 +4,7 @@ import { useGetMeQuery } from '@/lib/api/baseApi';
 import Link from 'next/link';
 import React from 'react';
 import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 
 // TypeScript interfaces
 interface PricingFeature {
@@ -115,8 +116,12 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
   const { data: getMe } = useGetMeQuery('');
 
  const handleItem = async (item: PricingPlan) => {
+
+  console.log("click handel payment");
+  
   if (item.price === 'Custom') {
-    alert('Please contact sales.');
+    
+    toast.success("Please contact sales or support")
     return;
   }
 
@@ -133,6 +138,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
 
     const stripeUrl = res.data.data.url;
     window.location.href = stripeUrl;
+
   } catch (error: any) {
     console.error(error);
     alert(error.response?.data?.message || 'Failed');
@@ -167,6 +173,8 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
 
   return (
     <div className={cardClasses}>
+      
+
       {plan.isPopular && (
         <div className="absolute top-0 right-4 -mt-3 bg-indigo-500 dark:bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
           MOST POPULAR
@@ -208,6 +216,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
 const PricingSection: React.FC = () => {
   return (
     <section id="pricing" className="relative py-16 sm:py-24 overflow-hidden">
+      <Toaster position='top-right'/>
       <div className="absolute inset-0 opacity-30 dark:opacity-20">
         <div
           className="absolute inset-0"

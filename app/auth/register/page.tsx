@@ -152,7 +152,7 @@ const Signin1: React.FC = () => {
                     <CheckIcon /> Review Details
                   </h3>
                   <div className="space-y-1 text-sm">
-                    <div className="flex justify-between"><span>Name:</span> <span>{formData.fullName}</span></div>
+                    <div className="flex justify-between"><span>Name:</span> <span>{formData.name}</span></div>
                     <div className="flex justify-between"><span>Email:</span> <span>{formData.email}</span></div>
                     <div className="flex justify-between"><span>Password:</span> <span>••••••••</span></div>
                   </div>
