@@ -5,6 +5,9 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLoginUserMutation } from "@/lib/api/baseApi";
+
+
 
 
 export default function Login() {
@@ -14,6 +17,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+
+  const [ loginUser , {isLoading}] = useLoginUserMutation();
 
   const router = useRouter();
 
@@ -32,17 +37,12 @@ export default function Login() {
 
       const payload = { email, password };
 
-      const res = await axios.post(`${API_CALL}/auth/login-user`, payload, {
-        withCredentials: true,
-      });
+      const res = await loginUser(payload).unwrap();
 
-      const role = res?.data?.data?.userData?.role;
+      const role = res?.data?.data?.userData?.role ;
       console.log(role);
       
 
-    
-
-   
 
       if (role === "Admin") {
         console.log("admin");
@@ -129,12 +129,12 @@ export default function Login() {
             disabled={loading}
             className="w-full py-2 rounded-md bg-indigo-600 text-white font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
-            {loading ? "Signing In..." : "Sign In"}
+            {isLoading ? "Signing In..." : "Sign In"}
           </button>
         </form>
 
         <p className="text-sm text-center text-gray-600 dark:text-gray-300 mt-4">
-          Don't have an account?
+          Don t have an account?
           <Link
             href={`/auth/register`}
             className="ml-1 text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-700"

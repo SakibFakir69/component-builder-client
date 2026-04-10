@@ -1,11 +1,24 @@
+'use client'
+
 import HomePage from "@/components/home/HomePage"
+import { usePathname } from "next/navigation"
 
 
 
 
-function page() {
+function Page() {
+  console.log("home comonent")
+
+  const path = usePathname();
+  console.log(path , 'path');
+  
+  const isAuthNow = path.startsWith('/auth');
+  console.log(isAuthNow);
+
   return (
     <div>
+
+
       <HomePage/>
       
 
@@ -16,4 +29,4 @@ function page() {
   )
 }
 
-export default page
+export default Page;

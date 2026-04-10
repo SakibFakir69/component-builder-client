@@ -8,14 +8,19 @@ import Footer from "@/components/landing/Footer";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isDashboard = pathname.startsWith("/dashboard") || pathname.startsWith("/admin")  ;
+   const segment = pathname.split("/")[1];
+
+  const isHiddenLayout =
+    segment === "dashboard" ||
+    segment === "admin" ||
+    segment === "auth";   
 
   return (
     <ReduxProvider>
       
-      {!isDashboard && <MenuBar />}
+      {!isHiddenLayout && <MenuBar />}
       {children}
-      {!isDashboard && <Footer />}
+      {!isHiddenLayout && <Footer />}
 
     </ReduxProvider>
   );

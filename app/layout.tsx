@@ -13,7 +13,9 @@ export default function RootLayout({ children }: IChildren) {
     <html lang="en">
       <body>
         <ClientLayout>
+
           {children}
+          
         </ClientLayout>
         
       </body>
