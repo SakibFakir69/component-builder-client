@@ -121,7 +121,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
 
   try {
     const res = await axios.post(
-      'http://localhost:5000/api/v1/payment/create-payment',
+      'https://component-builder-server.onrender.com/api/v1/payment/create-payment',
       {
         planName: item.name,
         price: Number(item.price.replace('$', '')),

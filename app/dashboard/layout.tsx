@@ -11,13 +11,16 @@ function DashboardLayout({ children }: IChildren) {
 
   const { data: currentUser, isLoading } = useGetMeQuery(null);
 
-  const info = currentUser?.data || [];
+  const info = currentUser?.data ;
 
   useEffect(() => {
-    if (!isLoading && info?.role !== "User") {
-      router.push("/");
-    }
-  }, [info, isLoading, router]);
+  if (!isLoading && !info) return;
+
+  if (!isLoading && info?.role !== "User") {
+    router.replace("/"); 
+  }
+}, [info, isLoading, router])
+
 
    if (isLoading) return <LoadingStat />;
 
